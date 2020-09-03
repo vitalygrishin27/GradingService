@@ -7,4 +7,5 @@ public interface CRUDInterface<T> {
     T findById(long id);
     List<T> findAll();
     void delete(T t);
+    void deleteAll();
 }

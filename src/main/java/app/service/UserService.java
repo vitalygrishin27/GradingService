@@ -35,6 +35,11 @@ public class UserService implements CRUDInterface<User> {
         userRepository.delete(user);
     }
 
+    @Override
+    public void deleteAll() {
+        userRepository.deleteAll();
+    }
+
     public HttpStatus saveUserFlow(User user){
         return HttpStatus.OK;
     }

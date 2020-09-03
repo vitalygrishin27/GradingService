@@ -35,12 +35,31 @@ public class ConfigurationService implements CRUDInterface<Configuration> {
         repository.delete(configuration);
     }
 
-    public HttpStatus saveFlow(Configuration configuration) {
+    @Override
+    public void deleteAll() {
+        repository.deleteAll();
+    }
+
+    public Configuration findByConfigKey(String key) {
+        return repository.findByConfigKey(key);
+    }
+
+    public HttpStatus saveFlow(List<Configuration> configurations) {
+        for (Configuration configuration : configurations
+        ) {
+            Configuration configInDB = findByConfigKey(configuration.getConfigKey());
+            if (configInDB == null) {
+                save(configuration);
+            } else {
+                configInDB.setConfigValue(configuration.getConfigValue());
+                save(configInDB);
+            }
+        }
         return HttpStatus.OK;
     }
 
-    public HttpStatus deleteFlow(long id) {
-        delete(findById(id));
+    public HttpStatus deleteFlow(String configKey) {
+        delete(findByConfigKey(configKey));
         return HttpStatus.OK;
     }
 }
