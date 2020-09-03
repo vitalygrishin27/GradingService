@@ -1,7 +1,6 @@
 package app.service;
 
 import app.entity.Configuration;
-import app.entity.User;
 import app.repositories.CRUDInterface;
 import app.repositories.ConfigurationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
