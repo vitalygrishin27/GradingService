@@ -1,0 +1,14 @@
+{
+  "configurations": [
+    {
+      "id": 0,
+      "configKey": "theme",
+      "configValue": "green"
+    },
+    {
+      "id": 0,
+      "configKey": "font",
+      "configValue": "Arial"
+    }
+  ]
+}
