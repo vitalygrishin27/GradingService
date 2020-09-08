@@ -1,7 +1,10 @@
 package app.controller;
 
+import app.entity.AccessToken;
 import app.entity.User;
+import app.service.AccessTokenService;
 import app.service.UserService;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,21 +18,36 @@ public class UserController {
 
     @Autowired
     UserService userService;
+    @Autowired
+    AccessTokenService accessTokenService;
 
     @GetMapping("/user")
-    public ResponseEntity<List<User>> getAll() {
+    public ResponseEntity<List<User>> getAll(@RequestAttribute String token) {
+        if (!accessTokenService.isTokenValid(token)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
     }
+
     @PostMapping("/user")
-    public ResponseEntity save(@ModelAttribute User user) {
+    public ResponseEntity save(@NonNull @RequestBody User user, @RequestAttribute String token) {
+        if (!accessTokenService.isTokenValid(token)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         return ResponseEntity.status(userService.saveUserFlow(user)).build();
     }
+
     @PutMapping("/user")
-    public ResponseEntity update(@ModelAttribute User user) {
-        return ResponseEntity.status(userService.saveUserFlow(user)).build();
+    public ResponseEntity<AccessToken> tryToLogin(@NonNull @RequestBody User user, @RequestAttribute String token) {
+        return new ResponseEntity<>(userService.tryToLoginFlow(user), HttpStatus.OK);
     }
+
     @DeleteMapping("/user/{id}")
-    public ResponseEntity delete(@PathVariable long id) {
+    public ResponseEntity delete(@PathVariable long id, @RequestAttribute String token) {
+        if (!accessTokenService.isTokenValid(token)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         return ResponseEntity.status(userService.deleteUserFlow(id)).build();
     }
+
 }

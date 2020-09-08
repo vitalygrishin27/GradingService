@@ -2,7 +2,10 @@ package app.bdd.step;
 
 import app.bdd.dto.ResponseDto;
 import app.entity.Configuration;
+import app.entity.Role;
+import app.entity.User;
 import app.service.ConfigurationService;
+import app.service.UserService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,6 +24,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.management.relation.RoleList;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +40,9 @@ public class StepDefinition extends CommonStepDefinition {
 
     @Autowired
     private ConfigurationService configurationService;
+
+    @Autowired
+    private UserService userService;
 
     @Value("${server.port}")
     private String port;
@@ -55,11 +62,23 @@ public class StepDefinition extends CommonStepDefinition {
         return result;
     }
 
+    @DataTableType
+    public User defineUser(Map<String, String> entry) {
+        User result = new User();
+        result.setLogin(entry.get("login"));
+        result.setPassword(entry.get("password"));
+        result.setEncryptedPassword(entry.get("encryptedPassword"));
+        result.setFirstName(entry.get("firstName"));
+        result.setRole(Role.valueOf(entry.get("role")));
+        return result;
+    }
+
     @Given("Application started")
     @Transactional
     @Modifying
     public void applicationStarted() {
         configurationService.deleteAll();
+        userService.deleteAll();
     }
 
     @Given("existing Configuration")
@@ -67,6 +86,14 @@ public class StepDefinition extends CommonStepDefinition {
         List<Configuration> configurations = new ArrayList<>(dataTable.asList(Configuration.class));
         configurations.forEach(configuration -> {
             configurationService.save(configuration);
+        });
+    }
+
+    @Given("existing User")
+    public void putUserIntoDB(DataTable dataTable) {
+        List<User> users = new ArrayList<>(dataTable.asList(User.class));
+        users.forEach(user -> {
+            userService.save(user);
         });
     }
 
@@ -94,6 +121,11 @@ public class StepDefinition extends CommonStepDefinition {
     @When("called POST method for {string} with request content {string}")
     public void callPost(String url, String fileName) {
         executePost("http://localhost:" + port + url, fileName);
+    }
+
+    @When("called PUT method for {string} with request content {string}")
+    public void callPut(String url, String fileName) {
+        executePut("http://localhost:" + port + url, fileName);
     }
 
     @Then("response contains status code {int}")

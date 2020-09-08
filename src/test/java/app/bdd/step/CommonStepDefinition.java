@@ -92,6 +92,33 @@ public class CommonStepDefinition {
         });
     }
 
+    void executePut(String url, String fileName) {
+        final Map<String, String> headers = new HashMap<>();
+        headers.put("Accept", "application/json");
+        headers.put("Content-Type", "application/json");
+        final HeaderSettingsRequestCallback requestCallback = new HeaderSettingsRequestCallback(headers);
+        try (InputStream in = getClass().getResourceAsStream(fileName);
+             BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+            String fileContent = reader.lines().collect(Collectors.joining());
+            requestCallback.setBody(fileContent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        final ResponseResultErrorHandler errorHandler = new ResponseResultErrorHandler();
+
+        if (restTemplate == null) {
+            restTemplate = new RestTemplate();
+        }
+
+        restTemplate.setErrorHandler(errorHandler);
+        response = restTemplate.execute(url, HttpMethod.PUT, requestCallback, response -> {
+            if (errorHandler.hadError) {
+                return errorHandler.getResults();
+            }
+            return new ResponseResults(response,false);
+        });
+    }
+
     private class ResponseResultErrorHandler implements ResponseErrorHandler {
         private ResponseResults results = null;
         private Boolean hadError = false;
