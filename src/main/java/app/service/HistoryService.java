@@ -11,9 +11,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -33,8 +37,9 @@ public class HistoryService {
     public void fillRequestHistoryWithRequest(JoinPoint joinPoint) {
         LogsRep requestHistoryDto = new LogsRep();
         requestHistoryDto.setOperation(joinPoint.getSignature().getName());
-        requestHistoryDto.setHost(applicationContext.getEnvironment().getProperty("slaManagement.slaHost"));
-        requestHistoryDto.setInstanceName(applicationContext.getEnvironment().getProperty("slaManagement.slaInstance"));
+        requestHistoryDto.setHost(joinPoint.getSignature().getDeclaringType().getSimpleName());
+        // HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        requestHistoryDto.setToken(((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest().getHeader("gradingServiceAccessToken"));
         requestHistoryDto.setRequestTime(LocalDateTime.now());
         if (joinPoint.getArgs() != null) {
             requestHistoryDto.setRequestBody(Arrays.toString(joinPoint.getArgs()));

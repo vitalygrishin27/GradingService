@@ -17,7 +17,7 @@ public class LogsRep {
     private Long id;
 
     private String host;
-    private String instanceName;
+    private String token;
     private String caller;
     private String operation;
     private LocalDateTime requestTime;
@@ -31,7 +31,7 @@ public class LogsRep {
         return "SlaTimeDto{" +
                 "id='" + id + '\'' +
                 ", host='" + host + '\'' +
-                ", instanceName='" + instanceName + '\'' +
+                ", token='" + token + '\'' +
                 ", caller='" + caller + '\'' +
                 ", operation='" + operation + '\'' +
                 ", requestTime='" + requestTime + '\'' +
