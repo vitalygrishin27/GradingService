@@ -1,7 +1,8 @@
 package app.controller;
 
-import app.entity.AccessToken;
+import app.entity.Role;
 import app.entity.User;
+import app.entity.wrapper.AccessTokenWrapper;
 import app.service.AccessTokenService;
 import app.service.UserService;
 import lombok.NonNull;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -29,6 +31,22 @@ public class UserController {
         return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
     }
 
+    @GetMapping("/user/{id}")
+    public ResponseEntity<User> getAll(@RequestAttribute String token, @PathVariable long id) {
+        if (!accessTokenService.isTokenValid(token)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        return new ResponseEntity<>(userService.findById(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/roleList")
+    public ResponseEntity<List<Role>> getAllRole(@RequestAttribute String token) {
+        if (!accessTokenService.isTokenValid(token)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        return new ResponseEntity<>(Arrays.asList(Role.values()), HttpStatus.OK);
+    }
+
     @PostMapping("/user")
     public ResponseEntity save(@NonNull @RequestBody User user, @RequestAttribute String token) {
         if (!accessTokenService.isTokenValid(token)) {
@@ -38,7 +56,7 @@ public class UserController {
     }
 
     @PutMapping("/user")
-    public ResponseEntity<AccessToken> tryToLogin(@NonNull @RequestBody User user, @RequestAttribute String token) {
+    public ResponseEntity<AccessTokenWrapper> tryToLogin(@NonNull @RequestBody User user, @RequestAttribute String token) {
         return new ResponseEntity<>(userService.tryToLoginFlow(user), HttpStatus.OK);
     }
 

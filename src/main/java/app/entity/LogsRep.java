@@ -21,9 +21,11 @@ public class LogsRep {
     private String caller;
     private String operation;
     private LocalDateTime requestTime;
+    @Lob
     private String requestBody;
     private String responseCode;
     private LocalDateTime responseTime;
+    @Lob
     private String responseBody;
 
     @Override
