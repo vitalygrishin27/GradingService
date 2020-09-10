@@ -64,7 +64,7 @@ public class UserService implements CRUDInterface<User> {
                 return HttpStatus.CONFLICT;
             }
             User userWithSameLogin = findByLogin(user.getLogin());
-            if (userWithSameLogin.getId() != userFromDB.getId()) {
+            if (userWithSameLogin!=null && userWithSameLogin.getId() != userFromDB.getId()) {
                 return HttpStatus.CONFLICT;
             }
             //check for new password
@@ -103,7 +103,12 @@ public class UserService implements CRUDInterface<User> {
     }
 
     public HttpStatus deleteUserFlow(long id) {
-        delete(findById(id));
+        User userFromDB = findById(id);
+        // check for existing at least one admin user
+        if (userFromDB.getRole() == Role.ADMINISTRATOR && findByRole(Role.ADMINISTRATOR).size() == 1) {
+            return HttpStatus.CONFLICT;
+        }
+        delete(userFromDB);
         return HttpStatus.OK;
     }
 
