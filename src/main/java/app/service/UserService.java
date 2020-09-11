@@ -37,8 +37,8 @@ public class UserService implements CRUDInterface<User> {
     public List<Role> findRoleDueToken(String token) {
         User user = getUserByToken(token);
         List<Role> roles = new ArrayList<>();
-        if (user.getRole().equals(Role.ADMINISTRATOR) ||
-                user.getRole().equals(Role.MANAGER)) {
+        if (user!=null && (user.getRole().equals(Role.ADMINISTRATOR) ||
+                user.getRole().equals(Role.MANAGER))) {
             roles = Arrays.asList(Role.values());
         } else {
             roles.add(Role.PARTICIPANT);
@@ -49,7 +49,7 @@ public class UserService implements CRUDInterface<User> {
 
     private User getUserByToken(String token) {
         AccessToken accessToken = accessTokenService.findByToken(token);
-        return accessToken.getUser();
+        return accessToken != null ? accessToken.getUser() : null;
     }
 
     public List<User> findAllDueToken(String token) {
