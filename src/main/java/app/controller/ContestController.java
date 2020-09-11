@@ -29,6 +29,14 @@ public class ContestController {
         return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
     }
 
+    @GetMapping("/contest/{id}")
+    public ResponseEntity<Contest> getAll(@RequestAttribute String token, @PathVariable long id) {
+        if (!accessTokenService.isTokenValid(token)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        return new ResponseEntity<>(service.findById(id), HttpStatus.OK);
+    }
+
     @PostMapping("/contest")
     public ResponseEntity save(@NonNull @RequestBody Contest contest, @RequestAttribute String token) {
         if (!accessTokenService.isTokenValid(token)) {

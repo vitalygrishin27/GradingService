@@ -1,9 +1,7 @@
 package app.service;
 
-import app.entity.Configuration;
 import app.entity.Contest;
 import app.repositories.CRUDInterface;
-import app.repositories.ConfigurationRepository;
 import app.repositories.ContestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,8 +31,8 @@ public class ContestService implements CRUDInterface<Contest> {
     }
 
     @Override
-    public void delete(Contest contets) {
-        repository.delete(contets);
+    public void delete(Contest contest) {
+        repository.delete(contest);
     }
 
     @Override
@@ -47,10 +45,34 @@ public class ContestService implements CRUDInterface<Contest> {
     }
 
     public HttpStatus saveFlow(Contest contest) {
+        Contest contestFromDB;
+        if (contest.getId() == -1) {
+            //check for unique name
+            if (findByName(contest.getName()) != null) {
+                return HttpStatus.CONFLICT;
+            }
+            contestFromDB = new Contest();
+        } else {
+            contestFromDB = findById(contest.getId());
+            if (!contest.getName().equals(contestFromDB.getName())) {
+                //check for unique name
+                if (findByName(contest.getName()) != null) {
+                    return HttpStatus.CONFLICT;
+                }
+            }
+        }
+        contestFromDB.setName(contest.getName());
+        contestFromDB.setPhoto(contest.getPhoto());
+        save(contestFromDB);
         return HttpStatus.OK;
     }
 
     public HttpStatus deleteFlow(long contestId) {
+        Contest contestFromDB = findById(contestId);
+        if (!contestFromDB.getUsers().isEmpty()) {
+            return HttpStatus.CONFLICT;
+        }
+        delete(contestFromDB);
         return HttpStatus.OK;
     }
 }

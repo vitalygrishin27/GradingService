@@ -64,7 +64,7 @@ public class UserService implements CRUDInterface<User> {
                 return HttpStatus.CONFLICT;
             }
             User userWithSameLogin = findByLogin(user.getLogin());
-            if (userWithSameLogin!=null && userWithSameLogin.getId() != userFromDB.getId()) {
+            if (userWithSameLogin != null && userWithSameLogin.getId() != userFromDB.getId()) {
                 return HttpStatus.CONFLICT;
             }
             //check for new password
@@ -98,6 +98,7 @@ public class UserService implements CRUDInterface<User> {
         userFromDB.setLastName(user.getLastName());
         userFromDB.setFirstName(user.getFirstName());
         userFromDB.setSecondName(user.getSecondName());
+        userFromDB.setContests(user.getContests());
         save(userFromDB);
         return HttpStatus.OK;
     }

@@ -3,8 +3,11 @@ package app.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,6 +30,12 @@ public class User {
     private String secondName;
     private String lastName;
     private String position;
+    @ManyToMany (fetch = FetchType.LAZY)
+    @JoinTable (name="contest_users",
+            joinColumns = @JoinColumn(name = "contest_id"),
+            inverseJoinColumns = @JoinColumn(name="user_id"))
+    @Fetch(FetchMode.SUBSELECT)
+    private List<Contest> contests;
     @Lob
     private String photo;
 }
