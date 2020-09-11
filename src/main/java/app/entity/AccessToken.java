@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,7 +16,9 @@ public class AccessToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String token;
-    private String login;
+    @ManyToOne (optional = false)
+    @JoinColumn(name = "id_user")
+    private User user;
     private LocalDateTime dateFrom;
     private LocalDateTime dateEnd;
 }

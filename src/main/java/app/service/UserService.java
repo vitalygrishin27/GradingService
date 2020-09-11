@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -30,6 +32,37 @@ public class UserService implements CRUDInterface<User> {
     @Override
     public User findById(long id) {
         return userRepository.findById(id).orElse(null);
+    }
+
+    public List<Role> findRoleDueToken(String token) {
+        User user = getUserByToken(token);
+        List<Role> roles = new ArrayList<>();
+        if (user.getRole().equals(Role.ADMINISTRATOR) ||
+                user.getRole().equals(Role.MANAGER)) {
+            roles = Arrays.asList(Role.values());
+        } else {
+            roles.add(Role.PARTICIPANT);
+            roles.add(Role.UNDEFINED);
+        }
+        return roles;
+    }
+
+    private User getUserByToken(String token) {
+        AccessToken accessToken = accessTokenService.findByToken(token);
+        return accessToken.getUser();
+    }
+
+    public List<User> findAllDueToken(String token) {
+        List<User> result = new ArrayList<>();
+        User user = getUserByToken(token);
+        if (user.getRole().equals(Role.ADMINISTRATOR) ||
+                user.getRole().equals(Role.MANAGER) ||
+                user.getRole().equals(Role.JURY)) {
+            result = findAll();
+        } else {
+            result.add(user);
+        }
+        return result;
     }
 
     public User findByLogin(String login) {
@@ -116,7 +149,7 @@ public class UserService implements CRUDInterface<User> {
     public AccessTokenWrapper tryToLoginFlow(User user) {
         User userFromDB = findByLogin(user.getLogin());
         if (userFromDB != null && isPasswordMatch(user.getPassword(), userFromDB.getEncryptedPassword())) {
-            return convertToAccessTokenWrapper(accessTokenService.createAccessToken(userFromDB.getLogin()), userFromDB);
+            return convertToAccessTokenWrapper(accessTokenService.createAccessToken(userFromDB), userFromDB);
         } else {
             return null;
         }

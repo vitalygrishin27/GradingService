@@ -1,6 +1,7 @@
 package app.service;
 
 import app.entity.AccessToken;
+import app.entity.User;
 import app.repositories.AccessTokenRepository;
 import app.repositories.CRUDInterface;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,19 +42,19 @@ public class AccessTokenService implements CRUDInterface<AccessToken> {
         repository.deleteAll();
     }
 
-    public AccessToken findByLogin(String login) {
-        return repository.findByLogin(login);
+    public AccessToken findByUser(User user) {
+        return repository.findByUser(user);
     }
 
     public AccessToken findByToken(String token) {
         return repository.findByToken(token);
     }
 
-    public AccessToken createAccessToken(String login) {
+    public AccessToken createAccessToken(User user) {
         AccessToken accessToken = new AccessToken();
         accessToken.setDateFrom(LocalDateTime.now());
         accessToken.setDateEnd(LocalDateTime.now().plusDays(1));
-        accessToken.setLogin(login);
+        accessToken.setUser(user);
         accessToken.setToken(UUID.randomUUID().toString().toUpperCase());
         repository.save(accessToken);
         return accessToken;

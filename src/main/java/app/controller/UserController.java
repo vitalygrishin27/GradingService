@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -28,7 +27,7 @@ public class UserController {
         if (!accessTokenService.isTokenValid(token)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
+        return new ResponseEntity<>(userService.findAllDueToken(token), HttpStatus.OK);
     }
 
     @GetMapping("/user/{id}")
@@ -41,15 +40,15 @@ public class UserController {
 
     @GetMapping("/roleList")
     public ResponseEntity<List<Role>> getAllRole(@RequestAttribute String token) {
-        if (!accessTokenService.isTokenValid(token)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-        return new ResponseEntity<>(Arrays.asList(Role.values()), HttpStatus.OK);
+        return new ResponseEntity<>(userService.findRoleDueToken(token), HttpStatus.OK);
     }
 
     @PostMapping("/user")
     public ResponseEntity save(@NonNull @RequestBody User user, @RequestAttribute String token) {
-        if (!accessTokenService.isTokenValid(token)) {
+        if (!accessTokenService.isTokenValid(token) &&
+                (user.getRole().equals(Role.ADMINISTRATOR) ||
+                        user.getRole().equals(Role.MANAGER)
+                        || user.getRole().equals(Role.JURY))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         return ResponseEntity.status(userService.saveUserFlow(user)).build();
