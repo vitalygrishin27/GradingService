@@ -38,6 +38,7 @@ public class CommonStepDefinition {
     void executeGet(String url) {
         final Map<String, String> headers = new HashMap<>();
         headers.put("Accept", "application/json");
+        headers.put("gradingServiceAccessToken", "test");
         final HeaderSettingsRequestCallback requestCallback = new HeaderSettingsRequestCallback(headers);
         final ResponseResultErrorHandler errorHandler = new ResponseResultErrorHandler();
 
@@ -53,6 +54,7 @@ public class CommonStepDefinition {
     void executeDelete(String url) {
         final Map<String, String> headers = new HashMap<>();
         headers.put("Accept", "application/json");
+        headers.put("gradingServiceAccessToken", "test");
         final HeaderSettingsRequestCallback requestCallback = new HeaderSettingsRequestCallback(headers);
         final ResponseResultErrorHandler errorHandler = new ResponseResultErrorHandler();
 
@@ -69,6 +71,7 @@ public class CommonStepDefinition {
         final Map<String, String> headers = new HashMap<>();
         headers.put("Accept", "application/json");
         headers.put("Content-Type", "application/json");
+        headers.put("gradingServiceAccessToken", "test");
         final HeaderSettingsRequestCallback requestCallback = new HeaderSettingsRequestCallback(headers);
         try (InputStream in = getClass().getResourceAsStream(fileName);
              BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
@@ -96,6 +99,7 @@ public class CommonStepDefinition {
         final Map<String, String> headers = new HashMap<>();
         headers.put("Accept", "application/json");
         headers.put("Content-Type", "application/json");
+        headers.put("gradingServiceAccessToken", "test");
         final HeaderSettingsRequestCallback requestCallback = new HeaderSettingsRequestCallback(headers);
         try (InputStream in = getClass().getResourceAsStream(fileName);
              BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {

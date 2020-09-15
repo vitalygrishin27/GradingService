@@ -1,9 +1,11 @@
 package app.bdd.step;
 
 import app.bdd.dto.ResponseDto;
+import app.entity.AccessToken;
 import app.entity.Configuration;
 import app.entity.Role;
 import app.entity.User;
+import app.service.AccessTokenService;
 import app.service.ConfigurationService;
 import app.service.UserService;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -24,8 +26,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.management.relation.RoleList;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +46,9 @@ public class StepDefinition extends CommonStepDefinition {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private AccessTokenService accessTokenService;
 
     @Value("${server.port}")
     private String port;
@@ -73,10 +79,23 @@ public class StepDefinition extends CommonStepDefinition {
         return result;
     }
 
+    @DataTableType
+    public AccessToken defineToken(Map<String, String> entry) {
+        AccessToken result = new AccessToken();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
+        result.setToken(entry.get("token"));
+        User user = userService.findByLogin(entry.get("login"));
+        result.setUser(user);
+        result.setDateFrom(LocalDateTime.parse(entry.get("dateFrom"), formatter));
+        result.setDateEnd(LocalDateTime.parse(entry.get("dateEnd"), formatter));
+        return result;
+    }
+
     @Given("Application started")
     @Transactional
     @Modifying
     public void applicationStarted() {
+        accessTokenService.deleteAll();
         configurationService.deleteAll();
         userService.deleteAll();
     }
@@ -94,6 +113,13 @@ public class StepDefinition extends CommonStepDefinition {
         List<User> users = new ArrayList<>(dataTable.asList(User.class));
         users.forEach(user -> {
             userService.save(user);
+        });
+    }
+    @Given("existing Token")
+    public void putTokenIntoDB(DataTable dataTable) {
+        List<AccessToken> accessTokens = new ArrayList<>(dataTable.asList(AccessToken.class));
+        accessTokens.forEach(accessToken -> {
+            accessTokenService.save(accessToken);
         });
     }
 
