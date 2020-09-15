@@ -15,6 +15,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
+@RequestMapping("/users")
 public class UserController {
 
     @Autowired
@@ -22,7 +23,7 @@ public class UserController {
     @Autowired
     AccessTokenService accessTokenService;
 
-    @GetMapping("/user")
+    @GetMapping
     public ResponseEntity<List<User>> getAll(@RequestAttribute String token) {
         if (!accessTokenService.isTokenValid(token)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -30,8 +31,8 @@ public class UserController {
         return new ResponseEntity<>(userService.findAllDueToken(token), HttpStatus.OK);
     }
 
-    @GetMapping("/user/{id}")
-    public ResponseEntity<User> getAll(@RequestAttribute String token, @PathVariable long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getById(@RequestAttribute String token, @PathVariable long id) {
         if (!accessTokenService.isTokenValid(token)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -43,7 +44,7 @@ public class UserController {
         return new ResponseEntity<>(userService.findRoleDueToken(token), HttpStatus.OK);
     }
 
-    @PostMapping("/user")
+    @PostMapping
     public ResponseEntity save(@NonNull @RequestBody User user, @RequestAttribute String token) {
         if (!accessTokenService.isTokenValid(token) &&
                 (user.getRole().equals(Role.ADMINISTRATOR) ||
@@ -54,12 +55,12 @@ public class UserController {
         return ResponseEntity.status(userService.saveUserFlow(user)).build();
     }
 
-    @PutMapping("/user")
+    @PutMapping
     public ResponseEntity<AccessTokenWrapper> tryToLogin(@NonNull @RequestBody User user, @RequestAttribute String token) {
         return new ResponseEntity<>(userService.tryToLoginFlow(user), HttpStatus.OK);
     }
 
-    @DeleteMapping("/user/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable long id, @RequestAttribute String token) {
         if (!accessTokenService.isTokenValid(token)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

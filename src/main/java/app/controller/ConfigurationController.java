@@ -14,6 +14,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
+@RequestMapping("/configurations")
 public class ConfigurationController {
 
     @Autowired
@@ -21,8 +22,7 @@ public class ConfigurationController {
 
     @Autowired
     AccessTokenService accessTokenService;
-
-    @GetMapping("/configuration")
+@GetMapping
     public ResponseEntity<List<Configuration>> getAll(@RequestAttribute String token) {
         if (!accessTokenService.isTokenValid(token)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -30,7 +30,7 @@ public class ConfigurationController {
         return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
     }
 
-    @PostMapping("/configuration")
+    @PostMapping
     public ResponseEntity save(@NonNull @RequestBody ConfigurationWrapper configurationWrapper, @RequestAttribute String token) {
         if (!accessTokenService.isTokenValid(token)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -38,7 +38,7 @@ public class ConfigurationController {
         return ResponseEntity.status(service.saveFlow(configurationWrapper.getConfigurations())).build();
     }
 
-    @DeleteMapping("/configuration/{configKey}")
+    @DeleteMapping("/{configKey}")
     public ResponseEntity delete(@PathVariable String configKey, @RequestAttribute String token) {
         if (!accessTokenService.isTokenValid(token)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

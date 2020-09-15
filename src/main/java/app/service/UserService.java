@@ -4,7 +4,6 @@ import app.entity.AccessToken;
 import app.entity.Role;
 import app.entity.User;
 import app.entity.wrapper.AccessTokenWrapper;
-import app.repositories.CRUDInterface;
 import app.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

@@ -7,6 +7,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.List;
 
 @AllArgsConstructor
@@ -27,4 +28,6 @@ public class Contest {
     private List<User> users;
     @Lob
     private String photo;
+    @OneToMany(mappedBy = "contest", fetch = FetchType.LAZY)
+    private Collection<Performance> performances;
 }

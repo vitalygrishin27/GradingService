@@ -1,7 +1,6 @@
 package app.service;
 
 import app.entity.Contest;
-import app.repositories.CRUDInterface;
 import app.repositories.ContestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

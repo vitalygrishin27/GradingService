@@ -13,6 +13,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
+@RequestMapping("/contests")
 public class ContestController {
 
     @Autowired
@@ -21,7 +22,7 @@ public class ContestController {
     @Autowired
     AccessTokenService accessTokenService;
 
-    @GetMapping("/contest")
+    @GetMapping
     public ResponseEntity<List<Contest>> getAll(@RequestAttribute String token) {
         if (!accessTokenService.isTokenValid(token)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -29,7 +30,7 @@ public class ContestController {
         return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
     }
 
-    @GetMapping("/contest/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Contest> getAll(@RequestAttribute String token, @PathVariable long id) {
         if (!accessTokenService.isTokenValid(token)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -37,7 +38,7 @@ public class ContestController {
         return new ResponseEntity<>(service.findById(id), HttpStatus.OK);
     }
 
-    @PostMapping("/contest")
+    @PostMapping
     public ResponseEntity save(@NonNull @RequestBody Contest contest, @RequestAttribute String token) {
         if (!accessTokenService.isTokenValid(token)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -45,7 +46,7 @@ public class ContestController {
         return ResponseEntity.status(service.saveFlow(contest)).build();
     }
 
-    @DeleteMapping("/contest/{contestId}")
+    @DeleteMapping("/{contestId}")
     public ResponseEntity delete(@PathVariable long contestId, @RequestAttribute String token) {
         if (!accessTokenService.isTokenValid(token)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

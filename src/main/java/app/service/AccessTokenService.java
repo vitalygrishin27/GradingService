@@ -3,7 +3,6 @@ package app.service;
 import app.entity.AccessToken;
 import app.entity.User;
 import app.repositories.AccessTokenRepository;
-import app.repositories.CRUDInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
