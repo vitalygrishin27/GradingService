@@ -13,7 +13,7 @@ import javax.persistence.*;
 public class Configuration {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     @Column(nullable = false, unique = true)
     private String configKey;
     private String configValue;

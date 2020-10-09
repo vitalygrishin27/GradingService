@@ -4,9 +4,7 @@ public enum Role {
     ADMINISTRATOR ("ADMINISTRATOR"),
     JURY ("JURY"),
     MANAGER("MANAGER"),
-    PARTICIPANT("PARTICIPANT"),
-    UNDEFINED("UNDEFINED");
-
+    PARTICIPANT("PARTICIPANT");
     private String title;
 
     Role(String title) {

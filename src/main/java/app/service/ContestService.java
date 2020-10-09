@@ -62,6 +62,7 @@ public class ContestService implements CRUDInterface<Contest> {
         }
         contestFromDB.setName(contest.getName());
         contestFromDB.setPhoto(contest.getPhoto());
+        contestFromDB.setCategories(contest.getCategories());
         save(contestFromDB);
         return HttpStatus.OK;
     }

@@ -2,6 +2,8 @@ package app.controller;
 
 import app.entity.Role;
 import app.entity.User;
+import app.entity.bom.UserBom;
+import app.entity.converter.UserConverter;
 import app.entity.wrapper.AccessTokenWrapper;
 import app.service.AccessTokenService;
 import app.service.UserService;
@@ -22,21 +24,23 @@ public class UserController {
     UserService userService;
     @Autowired
     AccessTokenService accessTokenService;
+    @Autowired
+    UserConverter userConverter;
 
     @GetMapping
-    public ResponseEntity<List<User>> getAll(@RequestAttribute String token) {
+    public ResponseEntity<List<UserBom>> getAll(@RequestAttribute String token) {
         if (!accessTokenService.isTokenValid(token)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        return new ResponseEntity<>(userService.findAllDueToken(token), HttpStatus.OK);
+        return new ResponseEntity<>(userConverter.toBom(userService.findAllDueToken(token)), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getById(@RequestAttribute String token, @PathVariable long id) {
+    public ResponseEntity<UserBom> getById(@RequestAttribute String token, @PathVariable long id) {
         if (!accessTokenService.isTokenValid(token)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        return new ResponseEntity<>(userService.findById(id), HttpStatus.OK);
+        return new ResponseEntity<>(userConverter.toBom(userService.findById(id)), HttpStatus.OK);
     }
 
     @GetMapping("/roleList")
@@ -45,19 +49,19 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity save(@NonNull @RequestBody User user, @RequestAttribute String token) {
+    public ResponseEntity save(@NonNull @RequestBody UserBom userBom, @RequestAttribute String token) {
         if (!accessTokenService.isTokenValid(token) &&
-                (user.getRole().equals(Role.ADMINISTRATOR) ||
-                        user.getRole().equals(Role.MANAGER)
-                        || user.getRole().equals(Role.JURY))) {
+                (userBom.getRole().equals(Role.ADMINISTRATOR) ||
+                        userBom.getRole().equals(Role.MANAGER)
+                        || userBom.getRole().equals(Role.JURY))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        return ResponseEntity.status(userService.saveUserFlow(user)).build();
+        return ResponseEntity.status(userService.saveUserFlow(userConverter.fromBom(userBom))).build();
     }
 
     @PutMapping
-    public ResponseEntity<AccessTokenWrapper> tryToLogin(@NonNull @RequestBody User user, @RequestAttribute String token) {
-        return new ResponseEntity<>(userService.tryToLoginFlow(user), HttpStatus.OK);
+    public ResponseEntity<AccessTokenWrapper> tryToLogin(@NonNull @RequestBody UserBom userBom, @RequestAttribute String token) {
+        return new ResponseEntity<>(userService.tryToLoginFlow(userConverter.fromBom(userBom)), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

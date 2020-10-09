@@ -41,7 +41,6 @@ public class UserService implements CRUDInterface<User> {
             roles = Arrays.asList(Role.values());
         } else {
             roles.add(Role.PARTICIPANT);
-            roles.add(Role.UNDEFINED);
         }
         return roles;
     }
@@ -162,12 +161,12 @@ public class UserService implements CRUDInterface<User> {
         return accessTokenWrapper;
     }
 
-    private static String encryptePassword(String password) {
+    public static String encryptePassword(String password) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         return encoder.encode(password);
     }
 
-    private static Boolean isPasswordMatch(String password, String encryptedPassword) {
+    public static Boolean isPasswordMatch(String password, String encryptedPassword) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         return encoder.matches(password, encryptedPassword);
     }

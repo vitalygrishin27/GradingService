@@ -44,7 +44,8 @@ public class PerformanceService implements CRUDInterface<Performance> {
     }
 
     public HttpStatus savePerformanceFlow(Performance performance) {
-        return HttpStatus.OK;
+        performanceRepository.saveAndFlush(performance);
+        return HttpStatus.CREATED;
     }
 
     public HttpStatus deletePerformanceFlow(long id) {

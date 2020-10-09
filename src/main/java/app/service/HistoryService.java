@@ -40,6 +40,7 @@ public class HistoryService {
         requestHistoryDto.setHost(joinPoint.getSignature().getDeclaringType().getSimpleName());
         // HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         requestHistoryDto.setToken(((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest().getHeader("gradingServiceAccessToken"));
+        requestHistoryDto.setCaller(((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest().getHeader("origin"));
         requestHistoryDto.setRequestTime(LocalDateTime.now());
         if (joinPoint.getArgs() != null) {
             requestHistoryDto.setRequestBody(Arrays.toString(joinPoint.getArgs()));

@@ -1,6 +1,7 @@
 package app.controller;
 
-import app.entity.Contest;
+import app.entity.bom.ContestBom;
+import app.entity.converter.ContestConverter;
 import app.service.AccessTokenService;
 import app.service.ContestService;
 import lombok.NonNull;
@@ -22,28 +23,31 @@ public class ContestController {
     @Autowired
     AccessTokenService accessTokenService;
 
+    @Autowired
+    ContestConverter contestConverter;
+
     @GetMapping
-    public ResponseEntity<List<Contest>> getAll(@RequestAttribute String token) {
+    public ResponseEntity<List<ContestBom>> getAll(@RequestAttribute String token) {
         if (!accessTokenService.isTokenValid(token)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
+        return new ResponseEntity<>(contestConverter.toBom(service.findAll()), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Contest> getAll(@RequestAttribute String token, @PathVariable long id) {
+    public ResponseEntity<ContestBom> getAll(@RequestAttribute String token, @PathVariable long id) {
         if (!accessTokenService.isTokenValid(token)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        return new ResponseEntity<>(service.findById(id), HttpStatus.OK);
+        return new ResponseEntity<>(contestConverter.toBom(service.findById(id)), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity save(@NonNull @RequestBody Contest contest, @RequestAttribute String token) {
+    public ResponseEntity save(@NonNull @RequestBody ContestBom contestBom, @RequestAttribute String token) {
         if (!accessTokenService.isTokenValid(token)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        return ResponseEntity.status(service.saveFlow(contest)).build();
+        return ResponseEntity.status(service.saveFlow(contestConverter.fromBom(contestBom))).build();
     }
 
     @DeleteMapping("/{contestId}")

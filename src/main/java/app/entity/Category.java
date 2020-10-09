@@ -14,27 +14,30 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Data
-public class Contest {
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false, unique = true)
     private String name;
+
     private String description;
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "contest_users",
-            joinColumns = @JoinColumn(name = "contest_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
-    @Fetch(FetchMode.SUBSELECT)
-    private List<User> users;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "contest_categories",
             joinColumns = @JoinColumn(name = "contest_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     @Fetch(FetchMode.SUBSELECT)
-    private List<Category> categories;
-    @Lob
-    private String photo;
-    @OneToMany(mappedBy = "contest", fetch = FetchType.LAZY)
+    private List<Contest> contests;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "category_criteria",
+            joinColumns = @JoinColumn(name = "category_id"),
+            inverseJoinColumns = @JoinColumn(name = "criteria_id"))
+    @Fetch(FetchMode.SUBSELECT)
+    private List<Criterion> criteria;
+
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     private Collection<Performance> performances;
 }
