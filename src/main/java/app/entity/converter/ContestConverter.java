@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @Component
 public class ContestConverter {
     @Autowired
@@ -25,14 +26,17 @@ public class ContestConverter {
         }
         result.setId(bom.getId());
         result.setName(bom.getName());
-        result.setPhoto(bom.getPhoto());
+        if (bom.getPhoto() != null) result.setPhoto(bom.getPhoto());
         result.setDescription(bom.getDescription());
-        List<Category> categoryList = new ArrayList<>();
-        for (CategoryBom categoryBom : bom.getCategories()
-        ) {
-            categoryList.add(categoryConverter.fromBom(categoryBom));
+        if (bom.getCategories() != null) {
+            List<Category> categoryList = new ArrayList<>();
+            for (CategoryBom categoryBom : bom.getCategories()
+            ) {
+                categoryList.add(categoryConverter.fromBom(categoryBom));
+            }
+            result.setCategories(categoryList);
         }
-        result.setCategories(categoryList);
+
         return result;
     }
 

@@ -29,12 +29,14 @@ public class CategoryConverter {
         result.setId(bom.getId());
         result.setName(bom.getName());
         result.setDescription(bom.getDescription());
-        List<Criterion> criterionList = new ArrayList<>();
-        for (CriterionBom criterionBom : bom.getCriteria()
-        ) {
-            criterionList.add(criterionConverter.fromBom(criterionBom));
+        if (bom.getCriteria()!=null){
+            List<Criterion> criterionList = new ArrayList<>();
+            for (CriterionBom criterionBom : bom.getCriteria()
+            ) {
+                criterionList.add(criterionConverter.fromBom(criterionBom));
+            }
+            result.setCriteria(criterionList);
         }
-        result.setCriteria(criterionList);
         return result;
     }
 

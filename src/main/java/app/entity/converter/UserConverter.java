@@ -25,14 +25,16 @@ public class UserConverter {
         if (bom.getId() != null && bom.getId() != -1) {
             result = userService.findById(bom.getId());
         }
+        result.setId(bom.getId());
         result.setLogin(bom.getLogin());
         result.setPassword(bom.getPassword());
-        if (StringUtils.isNotEmpty(bom.getPassword())) result.setEncryptedPassword(UserService.encryptePassword(bom.getPassword()));
+        if (StringUtils.isNotEmpty(bom.getPassword()))
+            result.setEncryptedPassword(UserService.encryptePassword(bom.getPassword()));
         result.setFirstName(bom.getFirstName());
         result.setSecondName(bom.getSecondName());
         result.setLastName(bom.getLastName());
         result.setRole(bom.getRole());
-        result.setContests(contestConverter.fromBom(bom.getContests()));
+        if (bom.getContests() != null) result.setContests(contestConverter.fromBom(bom.getContests()));
 
         return result;
     }
